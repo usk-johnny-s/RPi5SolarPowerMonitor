@@ -1,0 +1,12 @@
+[Unit]
+Description=mqtt2influxdb
+After=network.target network-online.target influxdb.service
+
+[Service]
+Environment=INFLUX_TOKEN={{influx_token}}
+ExecStart=/opt/mqtt2influxdb/bin/python3 -u /opt/mqtt2influxdb/Mqtt2Influxdb.py
+Type=simple
+WorkingDirectory=/opt/mqtt2influxdb/
+
+[Install]
+WantedBy=multi-user.target

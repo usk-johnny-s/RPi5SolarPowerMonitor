@@ -1,0 +1,6 @@
+---
+influx_org: local
+influx_bucket: forever
+influx_user: "{{my_influx_user}}"
+influx_pwd: "{{my_influx_pwd}}"
+influx_token: "{{my_influx_token}}"

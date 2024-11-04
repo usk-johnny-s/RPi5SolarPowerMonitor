@@ -1,0 +1,11 @@
+[Unit]
+Description=ble2mqtt
+After=network.target network-online.target bluetooth.target
+
+[Service]
+ExecStart=/opt/ble2mqtt/bin/python3 -u /opt/ble2mqtt/Ble2Mqtt.py
+Type=simple
+WorkingDirectory=/opt/ble2mqtt/
+
+[Install]
+WantedBy=multi-user.target

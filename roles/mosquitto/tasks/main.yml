@@ -1,0 +1,45 @@
+---
+- name: gather service state
+  become: true
+  service_facts:
+  register: result_service_state
+
+- name: install mosquitto
+  become: true
+  apt:
+    name:
+      - mosquitto
+      - mosquitto-clients
+    update_cache: true      
+  register: result_install_mosquitto
+  
+- name: copy config
+  become: true
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
+    owner: root
+    group: root
+  with_items:
+    - { src: '../files/00-port.conf', dest: '/etc/mosquitto/conf.d/00-port.conf', mode: '0644' }
+    - { src: '../files/01-auth.conf', dest: '/etc/mosquitto/conf.d/01-auth.conf', mode: '0644' }
+  register: result_copy_config
+
+- name: reboot block
+  when: result_install_mosquitto.changed is true or result_copy_config.changed is true
+  block:
+
+  - name: reboot
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection

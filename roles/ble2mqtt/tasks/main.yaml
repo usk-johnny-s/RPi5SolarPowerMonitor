@@ -1,0 +1,78 @@
+---
+- name: create work directory
+  become: true
+  file:
+    path: /opt/ble2mqtt
+    state: directory
+    mode: '0755'
+  register: result_create_work_dir
+
+- name: copy scripts
+  become: true
+  template:
+    src: '{{ item }}'
+    dest: '/opt/ble2mqtt/{{ item }}'
+    mode: '0644'
+    owner: root
+    group: root
+  with_items:
+    - 'JbdBms_Util.py'
+    - 'Modbus_Util.py'
+    - 'Ble2Mqtt.py'
+    - 'BleDevice_JBD_BMS.py'
+    - 'BleDevice_LiTime_MPPT.py'
+    - 'IBleDevice.py'
+  register: result_copy_scripts
+  
+- name: install python3 packages
+  become: true
+  apt:
+    name:
+      - python3
+      - python3-venv
+  register: result_install_package_python3
+
+- name: setup venv ble2mqtt
+  become: true
+  shell: python3 -m venv /opt/ble2mqtt/
+  register: result_setup_venv
+
+- name: setup pip and packages
+  become: true
+  shell: . /opt/ble2mqtt/bin/activate; wget -O- https://bootstrap.pypa.io/get-pip.py | /opt/ble2mqtt/bin/python3; /opt/ble2mqtt/bin/pip install -U --no-cache-dir bleak msgpack paho-mqtt; deactivate
+  register: result_setup_pip_package
+
+- name: copy ble2mqtt service
+  become: true
+  template:
+    src: ble2mqtt.service
+    dest: /etc/systemd/system/ble2mqtt.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: result_copy_ble2mqtt_service
+
+- name: enable service ble2mqtt
+  become: true
+  service:
+    name: ble2mqtt
+    enabled: true
+  register: result_enable_ble2mqtt
+
+- name: reboot block 2
+  when: result_copy_ble2mqtt_service.changed is true or result_enable_ble2mqtt.changed is true
+  block:
+
+  - name: reboot
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection

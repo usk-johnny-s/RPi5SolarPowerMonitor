@@ -1,0 +1,72 @@
+---
+- name: Create aptkey directory
+  become: true
+  file:
+    path: /etc/apt/keyrings/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  register: result_create_aptkey_dir
+
+- name: set grafana package key
+  become: true
+  shell: wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+  register: result_grafana_package_key
+
+- name: copy grafana aptrepo list
+  become: true
+  copy:
+    src: ../files/grafana.list
+    dest: /etc/apt/sources.list.d/grafana.list
+    owner: root
+    group: root
+    mode: '0644'
+  register: result_copy_grafana_aptrepo_list
+
+- name: install grafana
+  become: true
+  apt:
+    name:
+      - grafana
+    update_cache: true      
+  register: result_install_grafana
+
+- name: disable reporting
+  become: true
+  command:
+    cmd: sed -i -ne 'H; ${x;s/\(\[analytics\][^\[]*[\r\n]\+\)\(\;\)\(reporting_enabled\s*=\s*\)\(true[^\n\r]*\)/\1\3false/;p}' grafana.ini
+    chdir: /etc/grafana
+  register: result_disable_reporting
+
+- name: enable anonymous access
+  become: true
+  command:
+    cmd: sed -i -ne 'H; ${x;s/\(\[auth\.anonymous\][^\[]*[\r\n]\+\)\(\;\)\(enabled\s*=\s*\)\(false[^\n\r]*\)/\1\3true/;p}' grafana.ini
+    chdir: /etc/grafana
+  register: result_restart_always
+
+- name: enable start service grafana-server
+  become: true
+  service:
+    name: grafana-server
+    enabled: true
+  register: result_enable_start_grafana_server
+
+- name: reboot block 2
+  when: result_install_grafana.changed is true or result_enable_start_grafana_server.changed is true
+  block:
+
+  - name: reboot 2
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot_2
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh 2
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection_2

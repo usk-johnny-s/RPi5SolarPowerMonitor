@@ -1,0 +1,76 @@
+---
+- name: create work directory
+  become: true
+  file:
+    path: /opt/mqtt2influxdb
+    state: directory
+    mode: '0755'
+  register: result_create_work_dir
+
+- name: copy scripts
+  become: true
+  template:
+    src: '{{ item }}'
+    dest: '/opt/mqtt2influxdb/{{ item }}'
+    mode: '0644'
+    owner: root
+    group: root
+  with_items:
+    - 'Mqtt2Influxdb.py'
+    - 'MqttDevice_JBD_BMS.py'
+    - 'MqttDevice_LiTime_MPPT.py'
+    - 'IMqttDevice.py'
+  register: result_copy_scripts
+  
+- name: install python3 packages
+  become: true
+  apt:
+    name:
+      - python3
+      - python3-venv
+  register: result_install_package_python3
+
+- name: setup venv mqtt2influxdb
+  become: true
+  shell: python3 -m venv /opt/mqtt2influxdb/
+  register: result_setup_venv
+
+- name: setup pip and packages
+  become: true
+  shell: . /opt/mqtt2influxdb/bin/activate; wget -O- https://bootstrap.pypa.io/get-pip.py | /opt/mqtt2influxdb/bin/python3; /opt/mqtt2influxdb/bin/pip install -U --no-cache-dir influxdb-client msgpack paho-mqtt; deactivate
+  register: result_setup_pip_package
+
+- name: copy mqtt2influxdb service
+  become: true
+  template:
+    src: mqtt2influxdb.service
+    dest: /etc/systemd/system/mqtt2influxdb.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: result_copy_mqtt2influxdb_service
+
+- name: enable service mqtt2influxdb
+  become: true
+  service:
+    name: mqtt2influxdb
+    enabled: true
+  register: result_enable_mqtt2influxdb
+
+- name: reboot block 2
+  when: result_copy_mqtt2influxdb_service.changed is true or result_enable_mqtt2influxdb.changed is true
+  block:
+
+  - name: reboot
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection

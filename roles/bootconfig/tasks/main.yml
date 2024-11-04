@@ -1,0 +1,47 @@
+---
+- name: apt update
+  become: true
+  apt:
+    update_cache: true
+  register: result_apt_update
+
+- name: OS update
+  become: true
+  apt:
+    upgrade: yes
+  register: result_update_os
+
+- name: 'customize bootconfig'
+  become: yes
+  command: "sed -i -e '/^\\s*\\(#\\s*\\|\\)\\s*{{item.regexp_tag}}/{x;/^.\\+$/{x;/^\\s*#/!{s/^\\(.*\\)$/# \\1/;};x};/^$/{x;h;/^\\s*{{item.regexp_tag_val}}\\s*\\(#.*\\|\\)$/!{s/^\\s*\\(#\\|\\)\\s*\\({{item.regexp_tag}}\\).*$/{{item.line_tag_val}}/;w /dev/stderr' -e ';};x};x};${x;/^$/{s//{{item.line_tag_val}}/;w /dev/stderr' -e ';H};x};' {{item.file}}"
+  changed_when: result_bootconfig_customize.stderr != ""
+  with_items:
+    - { regexp_tag: 'dtparam\s*=\s*rtc_bbat_vchg\s*=\s*', regexp_tag_val: 'dtparam\s*=\s*rtc_bbat_vchg\s*=\s*3100000', line_tag_val: 'dtparam=rtc_bbat_vchg=3100000', file: '/boot/firmware/config.txt' }
+  register: result_bootconfig_customize
+
+- name: disable rpi-connect service
+  become: true
+  command: "systemctl --global disable {{item}}"
+  changed_when: result_disable_rpi_connect.stderr != ""
+  with_items:
+    - rpi-connect-wayvnc
+    - rpi-connect.service
+  register: result_disable_rpi_connect
+
+- name: reboot block
+  when: result_update_os.changed is true and result_bootconfig_customize.changed is true or result_disable_rpi_connect.changed is true
+  block:
+
+  - name: reboot
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection

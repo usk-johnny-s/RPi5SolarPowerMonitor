@@ -1,0 +1,1427 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 6,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 16,
+        "x": 0,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.2.1",
+      "title": "Now",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 12,
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "Switch to TimeSeries",
+          "url": "/d/cdycwyjofrnr4b/timeseries"
+        }
+      ],
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.2.1",
+      "title": "Switch to: TimeSeries",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "neutral": 0
+          },
+          "decimals": 2,
+          "displayName": "${__field.name}",
+          "mappings": [],
+          "max": 18.5,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 11
+              },
+              {
+                "color": "dark-green",
+                "value": 13
+              },
+              {
+                "color": "dark-yellow",
+                "value": 14.2
+              },
+              {
+                "color": "dark-orange",
+                "value": 14.6
+              },
+              {
+                "color": "dark-red",
+                "value": 18.1
+              }
+            ]
+          },
+          "unit": "volt"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "battery"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "load"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pv"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 13,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "hide": false,
+          "query": "import \"strings\"\r\n\r\ntab0 = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"pv_voltage_x10\" or r._field == \"battery_voltage_x10\" or r._field == \"load_voltage_x10\" )\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value)/ 10.0, _field: strings.joinStr(arr: [strings.trimSuffix(v: r._field, suffix: \"_voltage_x10\")], v:\"_\") }))\r\n\r\ntab1 = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"total_voltage_x100\" )\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value)/ 100.0, _field: r.device }))\r\n\r\nunion(tables: [tab0, tab1])\r\n  |> sort(columns: [\"_field\"])\r\n  |> yield(name: \"a\")",
+          "refId": "A"
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "charge"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "Boost": {
+                        "color": "light-yellow",
+                        "index": 5
+                      },
+                      "Charging": {
+                        "color": "red",
+                        "index": 1
+                      },
+                      "Equalizing": {
+                        "color": "dark-orange",
+                        "index": 3
+                      },
+                      "Float": {
+                        "color": "dark-yellow",
+                        "index": 4
+                      },
+                      "Limit": {
+                        "color": "dark-blue",
+                        "index": 6
+                      },
+                      "Mppt": {
+                        "color": "dark-red",
+                        "index": 2
+                      },
+                      "NoCharge": {
+                        "color": "dark-green",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "pattern": "undef:.*",
+                      "result": {
+                        "color": "dark-purple",
+                        "index": 7
+                      }
+                    },
+                    "type": "regex"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "load"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "off": {
+                        "color": "dark-green",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "pattern": "ON:.*",
+                      "result": {
+                        "color": "dark-red",
+                        "index": 1
+                      }
+                    },
+                    "type": "regex"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 13,
+        "y": 1
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "query": "import \"strings\"\r\n\r\nimport \"bitwise\"\r\nimport \"strings\"\r\n\r\nnibble2hex = (v) => if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 0) then \"0\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 1) then \"1\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 2) then \"2\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 3) then \"3\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 4) then \"4\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 5) then \"5\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 6) then \"6\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 7) then \"7\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 8) then \"8\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 9) then \"9\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 10) then \"A\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 11) then \"B\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 12) then \"C\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 13) then \"D\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 14) then \"E\" else \"F\"\r\nbyte2hex = (v) => strings.joinStr(arr: [\"0x\",nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 4))),nibble2hex(v: v)], v:\"\")\r\nword2hex = (v) => strings.joinStr(arr: [\"0x\",nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 12))),nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 8))),nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 4))),nibble2hex(v: v)], v:\"\")\r\n\r\nstatus = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"last\")\r\n  |> filter(fn: (r) => r._field == \"load_status\" or r._field == \"charge_status\")\r\n  |> last()\r\n\r\ntab0 = status\r\n  |> filter(fn: (r) => r._field == \"load_status\")\r\n  |> map(fn: (r) => ({ r with _value: if r._value==0 then \"off\" else strings.joinStr(arr: [\"ON:\",byte2hex(v:r._value)], v:\"\"), _field: strings.trimSuffix(v: r._field, suffix: \"_status\")}))\r\n\r\ntab1 = status\r\n  |> filter(fn: (r) => r._field == \"charge_status\")\r\n  |> map(fn: (r) => ({ r with _value: if r._value==0 then \"NoCharge\" else if r._value==1 then \"Charging\" else if r._value==2 then \"Mppt\" else if r._value==3 then \"Equalizing\" else if r._value==4 then \"Float\" else if r._value==5 then \"Boost\"  else if r._value==6 then \"Limit\" else strings.joinStr(arr: [\"undef\",string(v:r._value)], v:\":\"), _field: strings.trimSuffix(v: r._field, suffix: \"_status\")}))\r\n\r\nunion(tables: [tab0, tab1])\r\n  |> sort(columns: [\"_field\"])\r\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> drop(columns: [\"_time\",\"_start\",\"_stop\",\"address\",\"bus\",\"category\",\"device\"])\r\n  |> yield(name: \"a\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "decimals": 3,
+          "displayName": "${__field.name}",
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "volt"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}#00"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}#01"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}#02"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}#03"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}#00"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}#01"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}#02"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}#03"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 9,
+        "x": 15,
+        "y": 1
+      },
+      "id": 6,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "left",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "hide": false,
+          "query": "import \"strings\"\r\nfrom(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"cell_voltage#00_x1000\" or r._field == \"cell_voltage#01_x1000\" or r._field == \"cell_voltage#02_x1000\" or r._field == \"cell_voltage#03_x1000\")\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value)/1000.0, _field: strings.joinStr(arr: [r.device,strings.trimSuffix(v: strings.trimPrefix(v: r._field, prefix: \"cell_voltage\"), suffix: \"_x1000\")], v:\"\") }))\r\n  |> sort(columns: [\"_field\"])\r\n  |> yield(name: \"a\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "neutral": 0
+          },
+          "displayName": "${__field.name}",
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-purple",
+                "value": null
+              }
+            ]
+          },
+          "unit": "amp"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "battery"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "load"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 13,
+        "x": 0,
+        "y": 4
+      },
+      "id": 2,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "hide": false,
+          "query": "import \"strings\"\r\n\r\ntmean0 = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"battery_current_x100\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value)/ 100.0, _field: strings.joinStr(arr: [strings.trimSuffix(v: r._field, suffix: \"_current_x100\")], v:\"_\") }))\r\n\r\ntmean1 = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"load_current_x100\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: -r._value)/ 100.0, _field: strings.joinStr(arr: [strings.trimSuffix(v: r._field, suffix: \"_current_x100\")], v:\"_\") }))\r\n\r\ntmean2 = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"current_x100\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: -r._value)/ 100.0, _field: strings.joinStr(arr: [r.device], v:\"_\") }))\r\n\r\nunion(tables: [tmean0, tmean1, tmean2])\r\n  |> sort(columns: [\"_field\"])\r\n  |> yield(name: \"a\")",
+          "refId": "A"
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "${__field.name}",
+          "mappings": [
+            {
+              "options": {
+                "ON": {
+                  "color": "dark-red",
+                  "index": 1
+                },
+                "off": {
+                  "color": "dark-green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 9,
+        "x": 15,
+        "y": 4
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "query": "import \"bitwise\"\r\nimport \"strings\"\r\n\r\nequilibrium = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"Bor\")\r\n  |> filter(fn: (r) => r._field == \"equilibrium\")\r\n  |> last()\r\n\r\ntab0 = equilibrium\r\n  |> map(fn: (r) => ({ r with _value: if (bitwise.uand(a: uint(v: r._value), b: uint(v: 1)) != uint(v: 0)) then \"ON\" else \"off\", _field: strings.joinStr(arr: [r.device,\"#00\"], v:\"\")}))\r\n\r\ntab1 = equilibrium\r\n  |> map(fn: (r) => ({ r with _value: if (bitwise.uand(a: uint(v: r._value), b: uint(v: 2)) != uint(v: 0)) then \"ON\" else \"off\", _field: strings.joinStr(arr: [r.device,\"#01\"], v:\"\")}))\r\n\r\ntab2 = equilibrium\r\n  |> map(fn: (r) => ({ r with _value: if (bitwise.uand(a: uint(v: r._value), b: uint(v: 4)) != uint(v: 0)) then \"ON\" else \"off\", _field: strings.joinStr(arr: [r.device,\"#02\"], v:\"\")}))\r\n\r\ntab3 = equilibrium\r\n  |> map(fn: (r) => ({ r with _value: if (bitwise.uand(a: uint(v: r._value), b: uint(v: 8)) != uint(v: 0)) then \"ON\" else \"off\", _field: strings.joinStr(arr: [r.device,\"#03\"], v:\"\")}))\r\n\r\nunion(tables: [tab0, tab1, tab2, tab3])\r\n  |> sort(columns: [\"_field\"])\r\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> drop(columns: [\"_time\",\"_start\",\"_stop\",\"address\",\"bus\",\"category\",\"device\"])\r\n  |> yield(name: \"a\")",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "decimals": 1,
+          "displayName": "${__field.name}",
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 300,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "amph"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 13,
+        "y": 5
+      },
+      "id": 3,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "left",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "hide": false,
+          "query": "from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"remain_capacity_x100\")\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value)/ 100.0, _field: r.device }))\r\n  |> sort(columns: [\"_field\"])\r\n  |> yield(name: \"a\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "decimals": 1,
+          "displayName": "${__field.name}",
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_controller_1}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}#00"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}#01"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}#02"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}#00"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}#01"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}#02"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 17,
+        "y": 5
+      },
+      "id": 5,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "hide": false,
+          "query": "import \"strings\"\r\n\r\ntab0 = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"controller_temperature_celsius\")\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _field: r.device }))\r\n\r\ntab1 = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"ntc#00\" or r._field == \"ntc#01\" or r._field == \"ntc#02\")\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _value: (float(v: r._value)-2731.0)/10.0, _field: strings.joinStr(arr: [r.device, strings.trimPrefix(v: r._field, prefix:\"ntc\")], v:\"\") }))\r\n\r\nunion(tables: [tab0, tab1])\r\n  |> sort(columns: [\"_field\"])\r\n  |> yield(name: \"a\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "displayName": "${__field.name}",
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_controller_1}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_2}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "state_of_charge_{{ble_batttery_1}}_min"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{{ble_batttery_1}}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "left",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "hide": false,
+          "query": "from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"mean\")\r\n  |> filter(fn: (r) => r._field == \"state_of_charge\")\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _field: r.device }))\r\n  |> sort(columns: [\"_field\"])\r\n  |> yield(name: \"a\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "${__field.name}",
+          "mappings": [
+            {
+              "options": {
+                "0x0000": {
+                  "color": "dark-green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "pattern": "0x.*",
+                "result": {
+                  "color": "dark-red",
+                  "index": 1
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 7,
+        "y": 8
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "query": "import \"bitwise\"\r\nimport \"strings\"\r\n\r\nnibble2hex = (v) => if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 0) then \"0\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 1) then \"1\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 2) then \"2\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 3) then \"3\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 4) then \"4\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 5) then \"5\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 6) then \"6\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 7) then \"7\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 8) then \"8\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 9) then \"9\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 10) then \"A\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 11) then \"B\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 12) then \"C\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 13) then \"D\" else if bitwise.uand(a: uint(v: v), b: uint(v: 15)) == uint(v: 14) then \"E\" else \"F\"\r\nbyte2hex = (v) => strings.joinStr(arr: [\"0x\",nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 4))),nibble2hex(v: v)], v:\"\")\r\nword2hex = (v) => strings.joinStr(arr: [\"0x\",nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 12))),nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 8))),nibble2hex(v: bitwise.urshift(a:uint(v: v) ,b: uint(v: 4))),nibble2hex(v: v)], v:\"\")\r\n\r\nstat = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"Bor\")\r\n  |> filter(fn: (r) => r._field == \"alarm\" or r._field == \"protection_status\")\r\n  |> last()\r\n  |> map(fn: (r) => ({ r with _value: word2hex(v: r._value), _field: r.device}))\r\n  |> sort(columns: [\"_field\"])\r\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> drop(columns: [\"_time\",\"_start\",\"_stop\",\"address\",\"bus\",\"category\",\"device\"])\r\n  |> yield(name: \"a\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "influxdb",
+        "uid": "fdy97r5yzsk5cd"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "${__field.name}",
+          "mappings": [
+            {
+              "options": {
+                "ON": {
+                  "color": "dark-red",
+                  "index": 1
+                },
+                "off": {
+                  "color": "dark-green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 7,
+        "y": 10
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": false
+      },
+      "pluginVersion": "11.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fdy97r5yzsk5cd"
+          },
+          "query": "import \"bitwise\"\r\nimport \"strings\"\r\n\r\nfet_control = from(bucket: \"$rp\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"Bor\")\r\n  |> filter(fn: (r) => r._field == \"fet_control\")\r\n  |> last()\r\n\r\ntab0 = fet_control\r\n  |> map(fn: (r) => ({ r with _value: if (bitwise.uand(a: uint(v: r._value), b: uint(v: 1)) != uint(v: 0)) then \"ON\" else \"off\", _field: strings.joinStr(arr: [r.device,\"#Charge\"], v:\"\")}))\r\n\r\ntab1 = fet_control\r\n  |> map(fn: (r) => ({ r with _value: if (bitwise.uand(a: uint(v: r._value), b: uint(v: 2)) != uint(v: 0)) then \"ON\" else \"off\", _field: strings.joinStr(arr: [r.device,\"#Discharge\"], v:\"\")}))\r\n\r\nunion(tables: [tab0, tab1])\r\n  |> sort(columns: [\"_field\"])\r\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> drop(columns: [\"_time\",\"_start\",\"_stop\",\"address\",\"bus\",\"category\",\"device\"])\r\n  |> yield(name: \"a\")",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "day",
+          "value": "day"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "fdy97r5yzsk5cd"
+        },
+        "definition": "import \"types\"\r\nimport \"date\"\r\nstart = if types.isType(type:\"duration\", v: v.timeRangeStart) then time(v: int(v: v.timeRangeStart) + int(v: v.timeRangeStop) - int(v: now())) else time(v: int(v: v.timeRangeStart) - int(v: now()))\r\nstop = time(v: 0)\r\nfrom(bucket: \"forever\")\r\n  |> range(start: 1900-01-01T00:00:00Z, stop: 1970-01-01T00:00:00Z)\r\n  |> filter(fn: (r) => r._measurement == \"rp_config\")\r\n  |> filter(fn: (r) => r._field == \"rp\")\r\n  |> range(start: start, stop: stop)\r\n  |> first()",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Retension Policy",
+        "multi": false,
+        "name": "rp",
+        "options": [],
+        "query": {
+          "maxDataPoints": 1,
+          "query": "import \"types\"\r\nimport \"date\"\r\nstart = if types.isType(type:\"duration\", v: v.timeRangeStart) then time(v: int(v: v.timeRangeStart) + int(v: v.timeRangeStop) - int(v: now())) else time(v: int(v: v.timeRangeStart) - int(v: now()))\r\nstop = time(v: 0)\r\nfrom(bucket: \"forever\")\r\n  |> range(start: 1900-01-01T00:00:00Z, stop: 1970-01-01T00:00:00Z)\r\n  |> filter(fn: (r) => r._measurement == \"rp_config\")\r\n  |> filter(fn: (r) => r._field == \"rp\")\r\n  |> range(start: start, stop: stop)\r\n  |> first()",
+          "refId": "InfluxVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": [
+      "30s",
+      "1m",
+      "5m",
+      "15m"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Now",
+  "uid": "ddyqtswv456gwb",
+  "version": 1,
+  "weekStart": ""
+}

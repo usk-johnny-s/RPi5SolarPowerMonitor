@@ -1,0 +1,140 @@
+---
+- name: Create work directory
+  become: true
+  file:
+    path: /opt/influxdb/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  register: result_create_work_dir
+
+- name: download key
+  become: true
+  uri:
+    timeout: 120
+    url: "https://repos.influxdata.com/influxdata-archive_compat.key"
+    dest: "/opt/influxdb/influxdata-archive_compat.key"
+    method: GET
+    status_code: [200,304]
+    owner: root
+    group: root
+    mode: '0644'
+  register: result_download_key
+
+- name: check key with SHASUMS256
+  become: true
+  shell:
+    cmd: "echo '393e8779c89ac8d958f81f942f9ad7fb82a25e133faddaf92e15b16e6ac9ce4c influxdata-archive_compat.key' | sha256sum -c; if [ $? -ne 0 ]; then echo 'Error at SHA256SUM'; exit 1; fi"
+    chdir: /opt/influxdb
+  changed_when: false
+  failed_when: result_check_key.rc != 0
+  register: result_check_key
+
+- name: set influxdb package key
+  become: true
+  shell:
+    cmd: cat influxdata-archive_compat.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg > /dev/null
+    chdir: /opt/influxdb
+  register: result_influxdb_package_key
+
+- name: copy influxdb aptrepo list
+  become: true
+  copy:
+    src: ../files/influxdata.list
+    dest: /etc/apt/sources.list.d/influxdata.list
+    owner: root
+    group: root
+    mode: '0644'
+  register: result_copy_influxdb_aptrepo_list
+
+- name: install influxdb
+  become: true
+  apt:
+    name:
+      - influxdb2
+    update_cache: true      
+  register: result_install_influxdb
+
+- name: influxdb restart always
+  become: true
+  command:
+    cmd: sed -i 's#^\(Restart\S*=\s*\)on-failure#\1always#'  influxd.service
+    chdir: /etc/systemd/system/
+  register: result_restart_always
+
+- name: influxdb reporting-disable
+  become: true
+  command:
+    cmd: sed -i 's#^\(/usr/bin/influxd\)\(\s*&\)$#\1 --reporting-disabled\2#'  influxd-systemd-start.sh
+    chdir: /usr/lib/influxdb/scripts/
+  register: result_reporting_disable
+
+- name: reboot block 2
+  when: result_install_influxdb.changed is true
+  block:
+
+  - name: reboot
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection
+
+- name: Wait for service to be ready
+  wait_for:
+    port: 8086
+    host: "{{ansible_host}}"
+    connect_timeout: 3
+    delay: 3
+    timeout: 30
+
+- name: influxdb setup
+  become: true
+  command:
+    cmd: "influx setup --username {{influx_user}} --password {{influx_pwd}} --token {{influx_token}} --org {{influx_org}} --bucket {{influx_bucket}} --force"
+    chdir: /usr/lib/influxdb/scripts/
+  changed_when: result_initial_setup.stderr == ""
+  failed_when: 'result_initial_setup.stderr | length > 0 and result_initial_setup.stderr != "Error: instance has already been set up"'
+  register: result_initial_setup
+
+- name: copy influxdb setting file
+  become: true
+  copy:
+    src: ../files/{{item}}
+    dest: /opt/influxdb/{{item}}
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - downsample_for_week.flux
+    - downsample_for_month.flux
+    - downsample_for_year.flux
+    - downsample_for_10year.flux
+    - initialdata_for_forever.lp
+  register: result_copy_influxdb_setting_file
+
+- name: influxdb initialize
+  become: true
+  command:
+    cmd: influx {{item}}
+    chdir: /opt/influxdb/
+  with_items:
+    - bucket create -n day -o local -r 24h
+    - bucket create -n week -o local -r 7d
+    - bucket create -n month -o local -r 31d
+    - bucket create -n year -o local -r 366d
+    - bucket create -n 10year -o local -r 3660d
+    - task create -o local -f downsample_for_week.flux
+    - task create -o local -f downsample_for_month.flux
+    - task create -o local -f downsample_for_year.flux
+    - task create -o local -f downsample_for_10year.flux
+    - write -b forever -o local -p s --format=lp -f initialdata_for_forever.lp
+  register: result_initialize

@@ -1,0 +1,43 @@
+---
+- name: Debug
+  debug:
+    var: authorized_keys
+  
+- name: Set authorized keys
+  ansible.posix.authorized_key:
+    user: "{{ssh_user}}"
+    state: present
+    key: "{{ssh_keys}}"
+  register: result_copy_key
+
+- name: Disable ssh password authentication
+  become: true
+  copy:
+    src: ../files/00-disablePasswordAuth.conf
+    dest: /etc/ssh/sshd_config.d/00-disablePasswordAuth.conf
+    owner: root
+    group: root
+    mode: '0600'
+  register: result_disable_password_auth_conf
+
+- name: start sshd service
+  become: true
+  service:
+    name: ssh
+    state: started
+  register: result_start_sshd_service
+
+- name: restart sshd service
+  when: ( result_disable_password_auth_conf.changed is true ) and result_start_sshd_service.changed != true
+  become: true
+  service:
+    name: ssh
+    state: restarted
+  register: result_restart_sshd_service
+
+- name: enable sshd service
+  become: true
+  service:
+    name: ssh
+    enabled: true
+  register: result_enable_sshd_service

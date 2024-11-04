@@ -1,0 +1,97 @@
+---
+- name: create work directory
+  become: true
+  file:
+    path: /opt/grafana_dashboard
+    state: directory
+    mode: '0755'
+  register: result_create_work_dir
+
+- name: copy json files
+  become: true
+  template:
+    src: '{{ item }}'
+    dest: '/opt/grafana_dashboard/{{ item }}'
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - dashboard_Now.json
+    - dashboard_TimeSeries.json
+    - dashboard_LogView.json
+  register: result_copy_json
+
+- name: Create influxdbv2(Flux) datasource
+  community.grafana.grafana_datasource:
+    url: "{{grafana_url}}"
+    url_username: "{{grafana_user}}"
+    url_password: "{{grafana_pwd}}"
+    org_id: "1"
+    name: "{{datasource_name_influx}}"
+    ds_type: "influxdb"
+    ds_url: "{{datasource_influx_url}}"
+    is_default: true
+    uid: 'fdy97r5yzsk5cd'
+    additional_json_data:
+      version: "Flux"
+      organization: "{{datasource_influx_org}}"
+      defaultBucket: "{{datasource_influx_bucket}}"
+    additional_secure_json_data:
+      token: "{{datasource_influx_token}}"
+  register: result_datasource
+
+- name: Import Grafana dashboard
+  community.grafana.grafana_dashboard:
+    url: "{{grafana_url}}"
+    url_username: "{{grafana_user}}"
+    url_password: "{{grafana_pwd}}"
+    org_id: "1"
+    state: present
+    commit_message: Import by ansible
+    overwrite: true
+    path: "/opt/grafana_dashboard/{{item}}"
+  with_items:
+    - dashboard_Now.json
+    - dashboard_TimeSeries.json
+    - dashboard_LogView.json
+  register: result_dashboard
+
+- name: Get home dashboard uid
+  shell: "curl -s --location '{{grafana_url}}/api/search?query=Now&type=dash-db&starred=false' --user '{{grafana_user}}:{{grafana_pwd}}' | sed -e 's/\\([{},]\\)/\\n\\1\\n/g;' | sed -ne '/^\"uid\":\".*\"$/s/^\"uid\":\"\\(.*\\)\"$/\\1/p'"
+  changed_when: false
+  failed_when: result_home_dashboard_uid.stdout | length == 0
+  register: result_home_dashboard_uid
+
+- name: Set default home dashboard
+  shell: "curl -s --location '{{grafana_url}}/api/org/preferences' --user '{{grafana_user}}:{{grafana_pwd}}' -X PUT -H 'Content-Type: application/json' -d '{\"homeDashboardUID\":\"{{result_home_dashboard_uid.stdout}}\"}'"
+  changed_when: result_set_home_dashboard_uid.stdout == '{"message":"Preferences updated"}' 
+  failed_when: result_set_home_dashboard_uid.stdout != '{"message":"Preferences updated"}'
+  register: result_set_home_dashboard_uid
+
+- name: copy grafana kiosk autostart
+  become: true
+  template:
+    src: grafana_kiosk.desktop
+    dest: /etc/xdg/autostart/grafana_kiosk.desktop
+    owner: root
+    group: root
+    mode: '0644'
+  register: result_copy_grafana_kiosk_autostart
+
+- name: reboot block
+  when: result_result_datasourcelink.changed is true or result_dashboard.changed is true or result_set_home_dashboard_uid.changed is true or result_copy_grafana_kiosk_autostart.changed is true
+  block:
+
+  - name: reboot
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection

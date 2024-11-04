@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Grafana Kiosk
+Comment=Grafana Kiosk
+NoDisplay=false
+Exec=chromium-browser --start-maximized --kiosk --noerrdialogs --disable-infobars --no-first-run --ozone-platform=wayland --enable-features=OverlayScrollbar ''{{grafana_url}}'/?kiosk'
+Terminal=false

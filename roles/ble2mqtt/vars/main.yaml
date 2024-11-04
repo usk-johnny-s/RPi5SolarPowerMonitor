@@ -1,0 +1,8 @@
+---
+ble_batttery_1: "{{my_ble_batttery_1}}"
+ble_batttery_2: "{{my_ble_batttery_2}}"
+ble_controller_1: "{{my_ble_controller_1}}"
+ble_batttery_pwd: "{{my_ble_batttery_pwd}}"
+mqtt_batttery_1: "{{my_mqtt_batttery_1 | default('JBD_BMS/1/msgpack')}}"
+mqtt_batttery_2: "{{my_mqtt_batttery_2 | default('JBD_BMS/2/msgpack')}}"
+mqtt_controller_1: "{{my_mqtt_controller_1 | default('LiTime_MPPT/1/msgpack')}}"

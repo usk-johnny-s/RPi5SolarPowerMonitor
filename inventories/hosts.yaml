@@ -1,0 +1,10 @@
+all:
+  hosts:
+    target:
+      ansible_connection: ssh
+      authorized_keys: "{{my_authorized_keys}}"
+      ansible_user: "{{my_ansible_user}}"
+      ansible_host: "{{my_ansible_host}}"
+      ansible_password: "{{my_ansible_password}}"
+      ansible_become_password: "{my_ansible_become_password}"
+

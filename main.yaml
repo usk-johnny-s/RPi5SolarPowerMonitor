@@ -1,0 +1,21 @@
+---
+- hosts: target
+  roles:
+    - role: sshd_prepare
+      tags: sshd_prepare
+    - role: bootconfig
+      tags: bootconfig
+    - role: ufw
+      tags: ufw
+    - role: influxdb
+      tags: influxdb
+    - role: grafana
+      tags: grafana
+    - role: mosquitto
+      tags: mosquitto
+    - role: ble2mqtt
+      tags: ble2mqtt
+    - role: mqtt2influxdb
+      tags: mqtt2influxdb
+    - role: grafana_dashboard
+      tags: grafana_dashboard

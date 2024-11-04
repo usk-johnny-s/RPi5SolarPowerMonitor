@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Firefox
+Comment=Firefox
+NoDisplay=false
+Exec=sh -c "sleep 10s && firefox --kiosk '{{grafana_url}}'"

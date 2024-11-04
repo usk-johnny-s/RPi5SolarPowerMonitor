@@ -1,0 +1,59 @@
+#### Require Varriables ###
+---
+
+- name: install ufw packages
+  become: true
+  apt:
+    name:
+      - ufw
+  register: result_install_package_ufw
+
+- name: Allow all from local network address
+  become: true
+  community.general.ufw:
+    rule: '{{ item.rule }}'
+    src: '{{ item.src }}'
+  with_items:
+    - { rule: 'allow', src: '10.0.0.0/8' }
+    - { rule: 'allow', src: '172.16.0.0/12' }
+    - { rule: 'allow', src: '192.168.0.0/16' }
+  register: result_allow_localnet
+
+- name: Allow port from external networks
+  become: true
+  community.general.ufw:
+    rule: '{{ item.rule }}'
+    proto: '{{ item.proto }}'
+    port: '{{ item.port }}'
+  with_items:
+    - { rule: 'limit', proto: 'tcp' ,port: 'ssh' }
+#    - { rule: 'allow', proto: 'tcp' ,port: '1883' }   # mqtt
+#    - { rule: 'allow', proto: 'tcp' ,port: '8086' }   # influxdb
+#    - { rule: 'allow', proto: 'tcp' ,port: '3000' }   # grafana
+  register: result_allow_external
+
+- name: Deny everything and enable UFW
+  become: true
+  community.general.ufw:
+    logging: 'on'
+    state: enabled
+    policy: deny
+  register: result_enable
+
+- name: reboot block
+  when: result_install_package_ufw.changed is true or  result_allow_localnet.changed is true or result_allow_external.changed is true or result_enable.changed is true
+  block:
+
+  - name: reboot
+    become: yes
+    shell: reboot
+    poll: 0
+    async: 10
+    register: result_reboot
+
+# Note: Few minutes takes to ready to connect after reboot.
+  - name: Wait reconnect ssh
+    wait_for_connection:
+      delay: 15
+      timeout: 300
+    register: result_wait_connection

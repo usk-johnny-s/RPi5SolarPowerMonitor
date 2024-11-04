@@ -1,0 +1,12 @@
+---
+grafana_url: "http://localhost:3000"
+grafana_user: "{{my_grafana_user | default('admin')}}"
+grafana_pwd: "{{my_grafana_pwd | default('admin')}}"
+datasource_name_influx: influxdb
+datasource_influx_url: "http://localhost:8086"
+datasource_influx_org: local
+datasource_influx_bucket: forever
+datasource_influx_token: "{{my_influx_token}}"
+ble_batttery_1: "{{my_ble_batttery_1}}"
+ble_batttery_2: "{{my_ble_batttery_2}}"
+ble_controller_1: "{{my_ble_controller_1}}"

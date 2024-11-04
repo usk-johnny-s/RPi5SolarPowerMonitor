@@ -1,0 +1,13 @@
+---
+#my_ansible_host: <RPi5 ip address>
+#my_ansible_user: <RPi5 default user name>
+#my_ansible_password: <RPi5 default user password>
+#my_ansible_become_password: <RPi5 default user password for sudo>
+#my_authorized_keys: <RPi5 default user ssh public key>
+#my_ble_batttery_1: <Ble device name of Battery1>
+#my_ble_batttery_2: <Ble device name of Battery2>
+#my_ble_batttery_pwd: <Ble device password of Battery1 and Battery2>
+#my_ble_controller_1: <Ble device name of Controller>
+#my_influx_user: <Influxdb administrator name>
+#my_influx_pwd: <Influxdb administrator password>
+#my_influx_token: <Influxdb administrator access token>
